@@ -1,17 +1,16 @@
 // import { useState } from 'react'
-import './App.css'
 import { Header } from './components/header/header'
+import { HomePage } from './components/home/home'
+import { AppContainer } from './style'
 
 function App() {
   // const [count, setCount] = useState(0)
 
   return (
-    <>
+    <AppContainer>
       <Header/>
-      <body>
-        Hello World
-      </body>
-    </>
+      <HomePage/>
+    </AppContainer>
   )
 }
 

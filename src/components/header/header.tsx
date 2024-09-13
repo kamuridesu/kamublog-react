@@ -11,7 +11,7 @@ export function Header() {
                 {
                     Object.keys(HEADER_CONTENT).map((key: string) => {
                         return (
-                            <OptionStyle><a href={HEADER_CONTENT[key]}>{key}</a></OptionStyle>
+                            <OptionStyle key={key}><a href={HEADER_CONTENT[key]}>{key}</a></OptionStyle>
                         )
                     })
                 }
