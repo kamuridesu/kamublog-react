@@ -1,37 +1,29 @@
-import { GoDot, GoDotFill } from "react-icons/go";
-import { PaginationContainer, PostColumn, HomeContainer, DescriptionContainer, ContentArea, PostTitle, PostBody } from "./style";
+import styled from "styled-components";
 
-interface PostProps {
-  title: string;
-  desc: string;
-}
+
+export const HomePageContainer = styled.div`
+  padding: 2rem;
+`;
+
 
 interface HomePageProps {
   description: string;
-  posts: PostProps[];
+  posts: { title: string; desc: string }[];
 }
 
 export function HomePage(props: HomePageProps) {
-  console.log(props)
   return (
-    <HomeContainer>
-      <DescriptionContainer>{props.description}</DescriptionContainer>
-      <ContentArea>
-          {
-            props.posts.map((post, index) => {
-              return (
-                <PostColumn key={index}>
-                  <PostTitle>{post.title}</PostTitle>
-                  <PostBody>{post.desc}</PostBody>
-                </PostColumn>
-              )
-            })
-          }
-        <PaginationContainer>
-          <GoDot />
-          <GoDotFill />
-        </PaginationContainer>
-      </ContentArea>
-    </HomeContainer>
+    <div>
+      <h1>Home</h1>
+      <p>{props.description}</p>
+      <ul>
+        {props.posts.map((post, index) => (
+          <li key={index}>
+            <h3>{post.title}</h3>
+            <p>{post.desc}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
