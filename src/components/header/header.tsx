@@ -1,3 +1,7 @@
+import { cn } from "@/lib/utils";
+import { MoonIcon, SunIcon, HamburgerMenuIcon } from "@radix-ui/react-icons";
+import { useEffect, useState } from "react";
+
 import {
     NavigationMenu,
     NavigationMenuItem,
@@ -11,10 +15,6 @@ import {
     DropdownMenuItem,
     DropdownMenuContent
 } from "@/components/ui/dropdown-menu";
-
-import { cn } from "@/lib/utils";
-import { MoonIcon, SunIcon, HamburgerMenuIcon } from "@radix-ui/react-icons";
-import { useEffect, useState } from "react";
 
 interface HeaderProps {
     blogTitle: string;
@@ -35,24 +35,33 @@ const HEADER_LINKS = [
     }
 ];
 
-export function Header(props: HeaderProps) {
+function DarkModeToggle(props: { dark: boolean, darkModeHandler?: () => void, hoverColor: string }) {
+    return (
+        <button className={cn("p-2", "rounded-md", `${props.hoverColor}`)} type="button" onClick={() => props.darkModeHandler && props.darkModeHandler()}>
+                {!props.dark && <MoonIcon className={cn("w-5", "h-5")} />}
+                {props.dark && <SunIcon className={cn("w-5", "h-5")} />}
+        </button>
+    )
+}
 
-    function useDark() {
-        const isDark = localStorage.getItem("dark") === "true";
-        const [dark, setDark] = useState(isDark);
-    
-        useEffect(() => dark ? 
-            document.documentElement.classList.add("dark") 
-            : document.documentElement.classList.remove("dark"), 
-        [dark]);
-    
-        const darkModeHandler = () => {
-            setDark(!dark);
-            localStorage.setItem("dark", (!dark).toString());
-        };
-    
-        return { dark, darkModeHandler };
-    }
+function useDark() {
+    const isDark = localStorage.getItem("dark") === "true";
+    const [dark, setDark] = useState(isDark);
+
+    useEffect(() => dark ? 
+        document.documentElement.classList.add("dark") 
+        : document.documentElement.classList.remove("dark"), 
+    [dark]);
+
+    const darkModeHandler = () => {
+        setDark(!dark);
+        localStorage.setItem("dark", (!dark).toString());
+    };
+
+    return { dark, darkModeHandler };
+}
+
+export function Header(props: HeaderProps) {
 
     const { dark, darkModeHandler } = useDark();
 
@@ -62,7 +71,7 @@ export function Header(props: HeaderProps) {
         <>
         <header className={cn("flex", "justify-between", "items-center", "p-5")}>
             <div className={cn("flex", "items-center")}>
-            <h1 className={cn("text-3xl", "font-bold", "ml-2")}><a href="/">{props.blogTitle}</a></h1>
+            <h1 className={cn("font-bold", "ml-2", "text-2xl")}><a href="/">{props.blogTitle}</a></h1>
             </div>
 
             <DropdownMenu>
@@ -78,14 +87,7 @@ export function Header(props: HeaderProps) {
                         </DropdownMenuItem>
                     ))}
                     <DropdownMenuItem>
-                        <button className={cn("p-2", "rounded-md", `${hoverColor}`)} type="button" onClick={() => darkModeHandler && darkModeHandler()}>
-                                {
-                                    !dark && <MoonIcon className={cn("w-5", "h-5")} />
-                                }
-                                {
-                                    dark && <SunIcon className={cn("w-5", "h-5")} />
-                                }
-                        </button>
+                        <DarkModeToggle dark={dark} darkModeHandler={darkModeHandler} hoverColor={hoverColor} />
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -98,14 +100,7 @@ export function Header(props: HeaderProps) {
                         </NavigationMenuItem>
                     ))}
                     <NavigationMenuItem>
-                        <button className={cn("p-2", "rounded-md", `${hoverColor}`)} type="button" onClick={() => darkModeHandler && darkModeHandler()}>
-                                {
-                                    !dark && <MoonIcon className={cn("w-5", "h-5")} />
-                                }
-                                {
-                                    dark && <SunIcon className={cn("w-5", "h-5")} />
-                                }
-                        </button>
+                        <DarkModeToggle dark={dark} darkModeHandler={darkModeHandler} hoverColor={hoverColor} />
                     </NavigationMenuItem>
                 </NavigationMenuList>
             </NavigationMenu>

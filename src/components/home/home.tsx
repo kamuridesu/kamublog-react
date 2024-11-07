@@ -16,12 +16,11 @@ export function HomePage(props: HomePageProps) {
   return (
     <div className={cn("p-", "flex", "flex-col", "items-center")}>
       <h2 >{props.description}</h2>
-      {/* carousel with 3 items if desktop and one if mobile */}
       <Carousel>
         <CarouselPrevious>Previous</CarouselPrevious>
         <CarouselContent>
           {props.posts.map((post, index) => (
-            <CarouselItem className={cn("basis-1/4")} key={index}>
+            <CarouselItem className={cn("basis-1/2")} key={index}>
               <h3>{post.title}</h3>
               <p>{post.desc}</p>
             </CarouselItem>
