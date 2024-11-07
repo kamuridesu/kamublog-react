@@ -3,31 +3,58 @@ import {
     NavigationMenuItem,
     NavigationMenuLink,
     NavigationMenuList,
-  } from "@/components/ui/navigation-menu";
+} from "@/components/ui/navigation-menu";
+
+import {
+    DropdownMenu,
+    DropdownMenuTrigger,
+    DropdownMenuItem,
+    DropdownMenuContent
+} from "@/components/ui/dropdown-menu";
+
 import { cn } from "@/lib/utils";
-import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
-import { useState } from "react";
+import { MoonIcon, SunIcon, HamburgerMenuIcon } from "@radix-ui/react-icons";
+import { useEffect, useState } from "react";
 
 interface HeaderProps {
     blogTitle: string;
 }
 
-function getInitialState() {
-    const darkMode = localStorage.getItem("darkMode");
-    if (darkMode === "enabled") {
-        return true;
+const HEADER_LINKS = [
+    {
+        title: 'Home',
+        href: '/'
+    },
+    {
+        title: 'About',
+        href: '/about'
+    },
+    {
+        title: 'Contact',
+        href: '/contact'
     }
-    return false;
-}
+];
 
 export function Header(props: HeaderProps) {
 
-    const [dark, setDark] = useState(false);
-    const darkModeHandler = () => {
-        setDark(!dark);
-        localStorage.setItem("darkMode", dark ? "disabled" : "enabled");
-        document.documentElement.classList.toggle("dark");
+    function useDark() {
+        const isDark = localStorage.getItem("dark") === "true";
+        const [dark, setDark] = useState(isDark);
+    
+        useEffect(() => dark ? 
+            document.documentElement.classList.add("dark") 
+            : document.documentElement.classList.remove("dark"), 
+        [dark]);
+    
+        const darkModeHandler = () => {
+            setDark(!dark);
+            localStorage.setItem("dark", (!dark).toString());
+        };
+    
+        return { dark, darkModeHandler };
     }
+
+    const { dark, darkModeHandler } = useDark();
 
     const hoverColor = dark ? "hover:bg-gray-800" : "hover:bg-gray-100";
 
@@ -35,19 +62,41 @@ export function Header(props: HeaderProps) {
         <>
         <header className={cn("flex", "justify-between", "items-center", "p-5")}>
             <div className={cn("flex", "items-center")}>
-            <h1 className={cn("text-2xl", "font-bold", "ml-2")}><a href="/">{props.blogTitle}</a></h1>
+            <h1 className={cn("text-3xl", "font-bold", "ml-2")}><a href="/">{props.blogTitle}</a></h1>
             </div>
-            <NavigationMenu>
+
+            <DropdownMenu>
+                <DropdownMenuTrigger>
+                    <button className={cn("lg:hidden", "p-2", "rounded-md", `${hoverColor}`)} type="button">
+                        <HamburgerMenuIcon className={cn("w-5", "h-5")} />
+                    </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className={cn("inline-flex", "justify-center", "lg:hidden")}>
+                    {HEADER_LINKS.map((link, index) => (
+                        <DropdownMenuItem className={cn("p-2", "rounded-md", `${hoverColor}`)} key={index}>
+                            <a href={link.href}>{link.title}</a>
+                        </DropdownMenuItem>
+                    ))}
+                    <DropdownMenuItem>
+                        <button className={cn("p-2", "rounded-md", `${hoverColor}`)} type="button" onClick={() => darkModeHandler && darkModeHandler()}>
+                                {
+                                    !dark && <MoonIcon className={cn("w-5", "h-5")} />
+                                }
+                                {
+                                    dark && <SunIcon className={cn("w-5", "h-5")} />
+                                }
+                        </button>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+
+            <NavigationMenu className={cn("hidden", "lg:flex")}>
                 <NavigationMenuList>
-                    <NavigationMenuItem>
-                        <NavigationMenuLink className={cn("p-2", "rounded-md", `${hoverColor}`)} href="/">Home</NavigationMenuLink>
-                    </NavigationMenuItem>
-                    <NavigationMenuItem>
-                        <NavigationMenuLink className={cn("p-2", "rounded-md", `${hoverColor}`)} href="/about">About</NavigationMenuLink>
-                    </NavigationMenuItem>
-                    <NavigationMenuItem>
-                        <NavigationMenuLink className={cn("p-2", "rounded-md", `${hoverColor}`)} href="/contact">Contact</NavigationMenuLink>
-                    </NavigationMenuItem>
+                    {HEADER_LINKS.map((link, index) => (
+                        <NavigationMenuItem key={index}>
+                            <NavigationMenuLink className={cn("p-2", "rounded-md", `${hoverColor}`)} href={link.href}>{link.title}</NavigationMenuLink>
+                        </NavigationMenuItem>
+                    ))}
                     <NavigationMenuItem>
                         <button className={cn("p-2", "rounded-md", `${hoverColor}`)} type="button" onClick={() => darkModeHandler && darkModeHandler()}>
                                 {
